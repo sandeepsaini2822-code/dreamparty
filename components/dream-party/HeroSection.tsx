@@ -12,7 +12,7 @@ export default function HeroSection() {
   return (
     <section
       style={{
-        minHeight: "100vh",
+       minHeight: isMobile ? "92svh" : "100vh",
         position: "relative",
         display: "flex",
         alignItems: "center",

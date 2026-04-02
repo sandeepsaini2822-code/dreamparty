@@ -6,8 +6,9 @@ import Reveal from "./Reveal";
 
 export default function FounderSection() {
   const { isMobile, isTablet } = useViewport();
-  const pagePad = isMobile ? 16 : isTablet ? 28 : 48;
-  const sectionPadY = isMobile ? 64 : 100;
+
+  const pagePad = isMobile ? 14 : isTablet ? 24 : 48;
+  const sectionPadY = isMobile ? 52 : isTablet ? 76 : 100;
 
   return (
     <section
@@ -23,8 +24,8 @@ export default function FounderSection() {
           maxWidth: 1200,
           margin: "0 auto",
           display: "grid",
-          gridTemplateColumns: isMobile || isTablet ? "1fr" : "420px 1fr",
-          gap: isMobile ? 32 : 56,
+          gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr" : "420px minmax(0, 1fr)",
+          gap: isMobile ? 24 : isTablet ? 34 : 56,
           alignItems: "center",
         }}
       >
@@ -32,14 +33,15 @@ export default function FounderSection() {
           <div
             style={{
               ...PANEL_SOFT,
-              padding: isMobile ? 18 : 22,
+              padding: isMobile ? 14 : isTablet ? 18 : 22,
+              width: "100%",
             }}
           >
             <div
               style={{
                 width: "100%",
                 overflow: "hidden",
-                borderRadius: 18,
+                borderRadius: isMobile ? 14 : 18,
                 border: BORDER_MID,
                 background: "rgba(255,255,255,0.03)",
               }}
@@ -49,8 +51,9 @@ export default function FounderSection() {
                 alt="Founder of Dream Party"
                 style={{
                   width: "100%",
-                  height: isMobile ? 320 : 445,
+                  height: isMobile ? 260 : isTablet ? 380 : 445,
                   objectFit: "cover",
+                  objectPosition: "center top",
                   display: "block",
                 }}
               />
@@ -58,15 +61,15 @@ export default function FounderSection() {
           </div>
         </Reveal>
 
-        <div>
+        <div style={{ minWidth: 0 }}>
           <Reveal>
             <p
               style={{
-                fontSize: "0.72rem",
-                letterSpacing: "0.35em",
+                fontSize: isMobile ? "0.62rem" : "0.72rem",
+                letterSpacing: isMobile ? "0.22em" : "0.35em",
                 textTransform: "uppercase",
                 color: G.goldLight,
-                marginBottom: 12,
+                marginBottom: 10,
               }}
             >
               Founder&apos;s Message
@@ -77,10 +80,16 @@ export default function FounderSection() {
             <h2
               style={{
                 fontFamily: "Playfair Display, serif",
-                fontSize: isMobile ? "2rem" : "clamp(2.5rem, 4vw, 3.8rem)",
-                lineHeight: 1.12,
+                fontSize: isMobile
+                  ? "1.85rem"
+                  : isTablet
+                  ? "2.5rem"
+                  : "clamp(2.5rem, 4vw, 3.8rem)",
+                lineHeight: 1.15,
                 color: G.cream,
                 marginBottom: 14,
+                marginTop: 0,
+                wordBreak: "break-word",
               }}
             >
               Built with warmth,
@@ -93,9 +102,10 @@ export default function FounderSection() {
             <div
               style={{
                 color: G.goldLight,
-                fontSize: isMobile ? "1rem" : "1.08rem",
-                marginBottom: 18,
+                fontSize: isMobile ? "0.95rem" : isTablet ? "1rem" : "1.08rem",
+                marginBottom: 16,
                 fontFamily: "Cormorant Garamond, serif",
+                lineHeight: 1.5,
               }}
             >
               Akash Saini • Founder, Dream Party
@@ -106,9 +116,9 @@ export default function FounderSection() {
             <p
               style={{
                 color: G.textDim,
-                lineHeight: 1.9,
-                fontSize: isMobile ? "1rem" : "1.06rem",
-                marginBottom: 18,
+                lineHeight: isMobile ? 1.75 : 1.9,
+                fontSize: isMobile ? "0.95rem" : isTablet ? "1rem" : "1.06rem",
+                marginBottom: 16,
                 fontWeight: 300,
               }}
             >
@@ -122,9 +132,9 @@ export default function FounderSection() {
             <p
               style={{
                 color: G.textDim,
-                lineHeight: 1.9,
-                fontSize: isMobile ? "1rem" : "1.06rem",
-                marginBottom: 26,
+                lineHeight: isMobile ? 1.75 : 1.9,
+                fontSize: isMobile ? "0.95rem" : isTablet ? "1rem" : "1.06rem",
+                marginBottom: 22,
                 fontWeight: 300,
               }}
             >
@@ -137,15 +147,18 @@ export default function FounderSection() {
           <Reveal delay={0.4}>
             <div
               style={{
-                display: "inline-block",
-                padding: isMobile ? "14px 16px" : "16px 20px",
-                borderRadius: 16,
+                display: "block",
+                width: "100%",
+                maxWidth: 680,
+                padding: isMobile ? "14px 14px" : isTablet ? "15px 18px" : "16px 20px",
+                borderRadius: isMobile ? 14 : 16,
                 border: "1px solid rgba(245,158,11,0.18)",
                 background: "rgba(255,255,255,0.03)",
                 color: G.creamDim,
                 fontFamily: "Cormorant Garamond, serif",
-                lineHeight: 1.8,
-                maxWidth: 680,
+                lineHeight: isMobile ? 1.7 : 1.8,
+                fontSize: isMobile ? "0.98rem" : isTablet ? "1.02rem" : "1.08rem",
+                boxSizing: "border-box",
               }}
             >
               “Our goal is not only to serve food, but to create happiness, trust, and
