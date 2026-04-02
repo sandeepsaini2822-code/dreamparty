@@ -42,8 +42,9 @@ export interface PaymentModalProps {
   open: boolean;
   cart: CartItem[];
   total: number;
+  checkoutData: CheckoutData;
   onClose: () => void;
-  clearCart: () => void;
+  onSuccess: () => void;
 }
 
 export type CheckoutData = {

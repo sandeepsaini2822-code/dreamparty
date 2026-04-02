@@ -16,8 +16,9 @@ export default function PaymentModal({
   open,
   cart,
   total,
+  checkoutData,
   onClose,
-  clearCart,
+  onSuccess,
 }: PaymentModalProps): React.JSX.Element | null {
   const { isMobile } = useViewport()
   const [processing, setProcessing] = useState(false)
@@ -25,9 +26,7 @@ export default function PaymentModal({
 
   if (!open) return null
 
-  const buildWhatsAppURL = (
-    generatedOrderId: string
-  ): string => {
+  const buildWhatsAppURL = (generatedOrderId: string): string => {
     const itemLines = cart
       .map((i, index) => `${index + 1}. ${i.name} x${i.qty} = ₹${i.price * i.qty}`)
       .join("\n")
@@ -37,12 +36,25 @@ export default function PaymentModal({
 
 *Order ID:* ${generatedOrderId}
 
-*Items:*
+*Customer Details*
+👤 Name: ${checkoutData.customerName}
+📞 Phone: ${checkoutData.customerPhone}
+📍 Address: ${checkoutData.customerAddress}
+📮 Pincode: ${checkoutData.customerPincode}
+
+*Verified Current Location*
+Latitude: ${checkoutData.location.lat}
+Longitude: ${checkoutData.location.lng}
+Map: ${checkoutData.location.mapLink}
+
+*Items Ordered*
 ${itemLines}
 
-*Total Amount to Collect:* ₹${total}
+*Total Amount:* ₹${total}
 
 *Payment Status:* Pending
+
+Customer will pay after receiving QR manually and will share screenshot on WhatsApp.
     `.trim()
 
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
@@ -51,6 +63,11 @@ ${itemLines}
   const handlePlaceOrder = (): void => {
     if (cart.length === 0) {
       alert("Your cart is empty.")
+      return
+    }
+
+    if (!checkoutData.customerName || !checkoutData.customerPhone || !checkoutData.customerAddress) {
+      alert("Customer details are missing. Please go back and fill delivery details.")
       return
     }
 
@@ -64,9 +81,8 @@ ${itemLines}
       const url = buildWhatsAppURL(generatedOrderId)
       window.open(url, "_blank")
 
-      clearCart()
-      onClose()
-    }, 1200)
+      onSuccess()
+    }, 1000)
   }
 
   return (
@@ -86,7 +102,7 @@ ${itemLines}
       <div
         style={{
           ...PANEL,
-          maxWidth: 520,
+          maxWidth: 560,
           width: "100%",
           maxHeight: isMobile ? "92vh" : "90vh",
           overflowY: "auto",
@@ -127,6 +143,48 @@ ${itemLines}
         </div>
 
         <div style={{ padding: isMobile ? "20px 18px" : "28px 32px" }}>
+          <div
+            style={{
+              ...PANEL_SOFT,
+              padding: 16,
+              marginBottom: 20,
+              borderRadius: 14,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "Playfair Display, serif",
+                fontSize: "1rem",
+                color: G.cream,
+                marginBottom: 12,
+              }}
+            >
+              Customer Details
+            </div>
+
+            <div style={detailRowStyle}>
+              <span>Name</span>
+              <span style={valueStyle}>{checkoutData.customerName}</span>
+            </div>
+
+            <div style={detailRowStyle}>
+              <span>Phone</span>
+              <span style={valueStyle}>{checkoutData.customerPhone}</span>
+            </div>
+
+            <div style={detailRowStyle}>
+              <span>Pincode</span>
+              <span style={valueStyle}>{checkoutData.customerPincode}</span>
+            </div>
+
+            <div style={{ ...detailRowStyle, alignItems: "flex-start" }}>
+              <span>Address</span>
+              <span style={{ ...valueStyle, textAlign: "right", maxWidth: "70%" }}>
+                {checkoutData.customerAddress}
+              </span>
+            </div>
+          </div>
+
           <div
             style={{
               ...PANEL_SOFT,
@@ -193,7 +251,8 @@ ${itemLines}
               lineHeight: 1.7,
             }}
           >
-            When you place this order, it will be sent to WhatsApp. After that, Dream Party Cafe can review the order, send QR manually, and verify the screenshot.
+            This order will be sent on WhatsApp with customer details and verified location.
+            Dream Party will review the order, send QR manually, and verify the payment screenshot.
           </div>
 
           <button
@@ -229,4 +288,18 @@ ${itemLines}
       </div>
     </div>
   )
+}
+
+const detailRowStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 12,
+  fontSize: "0.9rem",
+  color: G.textDim,
+  marginBottom: 8,
+}
+
+const valueStyle = {
+  color: G.goldLight,
+  textAlign: "right" as const,
 }

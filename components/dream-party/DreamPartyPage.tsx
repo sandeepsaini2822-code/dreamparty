@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useCart } from "@/lib/dream-party-hooks"
+import { CheckoutData, MenuItem } from "@/lib/dream-party-types"
 import Navbar from "./Navbar"
 import HeroSection from "./HeroSection"
 import ServicesStrip from "./ServicesStrip"
@@ -11,16 +12,7 @@ import ContactSection from "./ContactSection"
 import Footer from "./Footer"
 import CartDrawer from "./CartDrawer"
 import PaymentModal from "./PaymentModal"
-import FounderSection from "./FounderSection";
-type MenuItem = {
-  id: number
-  category: string
-  tag: string
-  name: string
-  desc: string
-  price: number
-  img: string
-}
+import FounderSection from "./FounderSection"
 
 export default function DreamPartyPage() {
   const { cart, add, remove, update, total, count, clear } = useCart()
@@ -33,6 +25,19 @@ export default function DreamPartyPage() {
   const [payOpen, setPayOpen] = useState(false)
   const [addedId, setAddedId] = useState<number | null>(null)
   const [activeCat, setActiveCat] = useState("All")
+  const [orderSuccess, setOrderSuccess] = useState(false)
+
+  const [checkoutData, setCheckoutData] = useState<CheckoutData>({
+    customerName: "",
+    customerPhone: "",
+    customerAddress: "",
+    customerPincode: "",
+    location: {
+      lat: 0,
+      lng: 0,
+      mapLink: "",
+    },
+  })
 
   useEffect(() => {
     async function loadMenu() {
@@ -68,6 +73,27 @@ export default function DreamPartyPage() {
     return menuItems.filter((item) => item.category === activeCat)
   }, [menuItems, activeCat])
 
+  const handleSuccess = () => {
+    setPayOpen(false)
+    setCartOpen(false)
+    clear()
+
+    setCheckoutData({
+      customerName: "",
+      customerPhone: "",
+      customerAddress: "",
+      customerPincode: "",
+      location: {
+        lat: 0,
+        lng: 0,
+        mapLink: "",
+      },
+    })
+
+    setOrderSuccess(true)
+    setTimeout(() => setOrderSuccess(false), 4000)
+  }
+
   return (
     <>
       <Navbar
@@ -75,9 +101,30 @@ export default function DreamPartyPage() {
         onCartOpen={() => setCartOpen(true)}
       />
 
+      {orderSuccess && (
+        <div
+          style={{
+            position: "fixed",
+            top: 90,
+            right: 24,
+            background: "linear-gradient(135deg, #7c2d12 0%, #ea580c 100%)",
+            color: "#fff",
+            padding: "14px 18px",
+            borderRadius: 14,
+            zIndex: 1500,
+            boxShadow: "0 12px 30px rgba(234,88,12,0.28)",
+            fontFamily: "Cormorant Garamond, serif",
+            fontSize: "1.05rem",
+          }}
+        >
+          ✓ Order sent on WhatsApp successfully
+        </div>
+      )}
+
       <HeroSection />
       <ServicesStrip />
       <FounderSection />
+
       {loading ? (
         <div className="px-6 py-10 text-center">Loading menu...</div>
       ) : error ? (
@@ -110,7 +157,8 @@ export default function DreamPartyPage() {
         remove={remove}
         update={update}
         clear={clear}
-        onCheckout={() => {
+        onCheckout={(data) => {
+          setCheckoutData(data)
           setCartOpen(false)
           setPayOpen(true)
         }}
@@ -121,7 +169,8 @@ export default function DreamPartyPage() {
         onClose={() => setPayOpen(false)}
         cart={cart}
         total={total}
-        clearCart={clear}
+        checkoutData={checkoutData}
+        onSuccess={handleSuccess}
       />
     </>
   )
